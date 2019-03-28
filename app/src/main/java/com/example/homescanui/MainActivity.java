@@ -16,6 +16,7 @@ import android.widget.Toast;
 public class MainActivity extends AppCompatActivity {
 
     private Button button;
+    private Button button2;
     private static final int REQUEST_CODE_PERMISSION = 2;
     String mPermission = Manifest.permission.ACCESS_FINE_LOCATION;
     private TextView textView;
@@ -28,6 +29,16 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        try {
+            if (ActivityCompat.checkSelfPermission(this, mPermission)
+                    != 0) {
+                ActivityCompat.requestPermissions(this, new String[]{mPermission},
+                        REQUEST_CODE_PERMISSION);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         button = findViewById(R.id.button);
         button.setOnClickListener(new View.OnClickListener() {
