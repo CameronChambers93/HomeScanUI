@@ -2,6 +2,7 @@ package com.example.homescanui;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
@@ -34,6 +35,7 @@ public class HomeScan extends AppCompatActivity {
     private static final String COGNITO_POOL_ID = "us-west-2:07589be7-8ed8-46b9-89e8-ee97c41cd0c0";
     private static final String IOT_ENDPOINT = "a2vd7uyfqfuks5-ats.iot.us-west-2.amazonaws.com";
     private Button button;
+    private Button gps_button;
     private static final int REQUEST_CODE_PERMISSION = 2;
     String mPermission = Manifest.permission.ACCESS_FINE_LOCATION;
     private TextView textView;
@@ -135,7 +137,7 @@ public class HomeScan extends AppCompatActivity {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            Toast.makeText(getApplicationContext(),"AWS Connection Successful", Toast.LENGTH_LONG);
+                            Toast.makeText(getApplicationContext(),"AWS Connection Successful", Toast.LENGTH_LONG).show();
                             if (throwable != null) {
                                 Log.e(LOG_TAG, "Connection error.", throwable);
                             }
@@ -145,7 +147,7 @@ public class HomeScan extends AppCompatActivity {
             });
         } catch (final Exception e) {
             Log.e(LOG_TAG, "Connection error.", e);
-            Toast.makeText(getApplicationContext(),"AWS Connection Error",Toast.LENGTH_LONG );
+            Toast.makeText(getApplicationContext(),"AWS Connection Error",Toast.LENGTH_LONG ).show();
         }
 
 
@@ -188,23 +190,15 @@ public class HomeScan extends AppCompatActivity {
         }
 
 
-        gps = new GPSTracker(HomeScan.this);
-        // check if GPS enabled
-        if(gps.canGetLocation()){
+        gps_button = findViewById(R.id.button2);
+        gps_button.setOnClickListener(new View.OnClickListener() {
 
-
-
-            double latitude = gps.getLatitude();
-            double longitude = gps.getLongitude();
-
-            Toast.makeText(getApplicationContext(), "Your Location is - \nLat: "
-                    + latitude + "\nLong: " + longitude, Toast.LENGTH_LONG).show();
-        }else {
-            // can't get location
-            // GPS or Network is not enabled
-            // Ask user to enable GPS/network in settings
-            gps.showSettingsAlert();
-        }
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(HomeScan.this, History.class);
+                startActivity(intent);
+            }
+        });
 
 
 

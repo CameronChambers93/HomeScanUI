@@ -19,7 +19,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".HomeScan"></activity>
+        <activity android:name=".History"></activity>
+        <activity android:name=".HomeScan" />
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -31,15 +32,6 @@
         <service
             android:name=".GPSTracker"
             android:process=":gps_tracker" />
-
-        <receiver android:name=".InfoReceiver">
-
-            <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED">
-                </action>
-            </intent-filter>
-
-        </receiver>
 
     </application>
 
