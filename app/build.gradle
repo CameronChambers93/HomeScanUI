@@ -29,4 +29,6 @@ dependencies {
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
     implementation files('org.eclipse.paho.client.mqttv3-1.2.1.jar')
+    implementation files('aws-android-sdk-2.12.6/lib/aws-android-sdk-cognito.jar')
+    implementation files('aws-android-sdk-2.12.6/lib/aws-android-sdk-cognitoidentityprovider.jar')
 }
