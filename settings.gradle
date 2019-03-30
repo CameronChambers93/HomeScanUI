@@ -1,0 +1,1 @@
+include ':app', ':aws-android-sdk-mobile-client', ':aws-android-sdk-cognitoauth', ':aws-android-sdk-auth-core'
