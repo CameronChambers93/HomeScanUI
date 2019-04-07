@@ -11,12 +11,15 @@
       }
     }
   },
-  "IdentityManager": {
-    "Default": {}
+  "S3TransferUtility": {
+    "Default": {
+      "Bucket": "homescanbucket",
+      "Region": "us-west-2"
+    }
   },
   "DynamoDBObjectMapper": {
     "Default": {
-      "Region": "us-east-1"
+      "Region": "us-west-2"
     }
   },
   "PinpointAnalytics": {
@@ -27,6 +30,12 @@
   },
   "PinpointTargeting": {
     "Default": {
+      "Region": "us-east-1"
+    }
+  },
+  "UserFileManager": {
+    "Default": {
+      "Bucket": "homescanai-userfiles-mobilehub-1441585133",
       "Region": "us-east-1"
     }
   }

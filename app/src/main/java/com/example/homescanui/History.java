@@ -1,125 +1,92 @@
 package com.example.homescanui;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
-
-import com.amazonaws.auth.CognitoCachingCredentialsProvider;
+import android.widget.TextView;
+import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBMapper;
 import com.amazonaws.mobile.client.AWSMobileClient;
-import com.amazonaws.mobile.config.AWSConfiguration;
+import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBScanExpression;
+import com.amazonaws.regions.Region;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
-
-import java.time.LocalTime;
+import com.amazonaws.services.dynamodbv2.model.AttributeValue;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class History extends AppCompatActivity {
 
+    //DO NOT ALLOW THESE TWO ON GITHUB
+    private final String KEY = "AKIAUOBTPW536TRH3PVD";
+    private final String SECRET = "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";
+
     DynamoDBMapper dynamoDBMapper;
+    private BasicAWSCredentials credentials;
+    public TextView historyResultText;
+    public static final String
+            ACTION_HISTORY_BROADCAST = History.class.getName() + "HistoryBroadcast";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_history);
 
-        // AWSMobileClient enables AWS user credentials to access your table
+        //Instantiate a DynamoDB Client using the access KEY and SECRET
         AWSMobileClient.getInstance().initialize(this).execute();
+        credentials = new BasicAWSCredentials(KEY,SECRET);
+        AmazonDynamoDBClient dynamoDBClient = new AmazonDynamoDBClient(credentials);
 
-        //This credentialsProvider allows users to access the DynamoDB
-        CognitoCachingCredentialsProvider credentialsProvider = new CognitoCachingCredentialsProvider(
-                getApplicationContext(),
-                "us-west-2:5f5ebaab-898a-4a97-a21b-fa40128de072", // Identity pool ID
-                Regions.US_WEST_2 // Region
+        //May not find DB if region not set
+        dynamoDBClient.setRegion(Region.getRegion(Regions.US_WEST_2));
+        this.dynamoDBMapper = new DynamoDBMapper(dynamoDBClient);
+
+        //The thread that queries the DB can't update the view, so use a BroadcastReceiver
+        LocalBroadcastManager.getInstance(this).registerReceiver(
+                new BroadcastReceiver() {
+                    @Override
+                    public void onReceive(Context context, Intent intent) {
+                        String text = intent.getStringExtra("History");
+                        historyResultText.append(text);
+                    }
+                }, new IntentFilter(History.ACTION_HISTORY_BROADCAST)
         );
-        AWSConfiguration configuration = AWSMobileClient.getInstance().getConfiguration();
-
-        // Add code to instantiate a AmazonDynamoDBClient
-        AmazonDynamoDBClient dynamoDBClient = new AmazonDynamoDBClient(credentialsProvider);
-        this.dynamoDBMapper = DynamoDBMapper.builder()
-                .dynamoDBClient(dynamoDBClient)
-                .awsConfiguration(configuration)
-                .build();
-        createHistory();
-        try {
-            wait(3000);
-        }
-        catch (Exception e){
-            Log.e("Error", "idk");
-        }
-        readHistory();
+        readLockHistoryThread();
     }
 
-    public void readUser() {
+
+    //Query must be ran in separate thread
+    public void readLockHistoryThread() {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                Log.e("Go: ", "Going");
                 try {
-                    UsersDO newsItem = dynamoDBMapper.load(
-                            UsersDO.class,
-                            "Article1",
-                            "This is the article content");
-                    // Item read
-                    Log.d("SUCCESS, ITEM GENERATED: ", "\n"+newsItem.getPiId()+"\n"+newsItem.getUserId());
+                    //Where the text will be placed
+                    historyResultText = findViewById(R.id.historyResultText);
+
+                    //Creates the query
+                    Map<String, AttributeValue> eav = new HashMap<>();
+                    eav.put(":val1", new AttributeValue().withN("4446"));
+                    DynamoDBScanExpression scanExpression = new DynamoDBScanExpression()
+                            .withFilterExpression("PhoneNumDoorStatus = :val1").withExpressionAttributeValues(eav);
+
+                    //Performs a scan and sends a broadcast to the receiver to update historyResultText
+                    List<LockHistoryDO> scanResult = dynamoDBMapper.scan(LockHistoryDO.class, scanExpression);
+                    for (LockHistoryDO lockHistoryItem: scanResult) {
+                        Intent intent = new Intent(ACTION_HISTORY_BROADCAST);
+                        intent.putExtra("History", lockHistoryItem.getUserId()+"\t"+lockHistoryItem.getTime()+"\t"+lockHistoryItem.getLockStatus()+"\n");
+                        LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(intent);
+                    }
                 }
                 catch(Exception e){
                     Log.e("FAILURE: ", e.toString());
                 }
-            }
-        }).start();
-    }
-
-    public void createUser() {
-        final UsersDO userItem= new UsersDO();
-
-        userItem.setUserId("Article1");
-        userItem.setPiId("This is the article content");
-
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                dynamoDBMapper.save(userItem);
-                Log.e("Test", "Success");
-                // Item saved
-            }
-        }).start();
-    }
-
-
-    public void readHistory() {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                Log.e("Go: ", "Going");
-                try {
-                    HisroryDO historyItem = dynamoDBMapper.load(
-                            HisroryDO.class,
-                            "User1",
-                            "Current time");
-
-                    // Item read
-                    Log.d("SUCCESS, ITEM GENERATED: ", "\n"+historyItem.getUserId()+"\n"+historyItem.getTime()+"\n"+historyItem.getLockAction());
-                }
-                catch(Exception e){
-                    Log.e("FAILURE: ", e.toString());
-                }
-            }
-        }).start();
-    }
-
-    public void createHistory() {
-        final HisroryDO historyItem = new HisroryDO();
-
-        historyItem.setUserId("User1");
-        historyItem.setTime("Current time");
-        historyItem.setLockAction("Locked");
-
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                dynamoDBMapper.save(historyItem);
-                Log.e("Test", "Success");
-                // Item saved
             }
         }).start();
     }

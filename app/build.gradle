@@ -10,6 +10,10 @@ android {
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
+    lintOptions {
+        checkReleaseBuilds false
+        abortOnError false
+    }
     buildTypes {
         release {
             minifyEnabled false
@@ -18,51 +22,8 @@ android {
     }
 }
 
+//Need to trim down dependencies
 dependencies {
-    /*implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation 'com.amazonaws:aws-android-sdk-ddb-mapper:2.7.+'
-    implementation 'com.amazonaws:aws-android-sdk-mobile-client:2.6.+'
-    implementation files('aws-iot-device-sdk-java-1.2.0.jar')
-    implementation 'com.android.support:appcompat-v7:28.0.0'
-    implementation 'com.android.support.constraint:constraint-layout:1.1.3'
-    testImplementation 'junit:junit:4.12'
-    androidTestImplementation 'com.android.support.test:runner:1.0.2'
-    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
-    implementation files('src/libs/aws-android-sdk-apigateway-core.jar')
-    implementation files('src/libs/aws-android-sdk-autoscaling.jar')
-    implementation files('src/libs/aws-android-sdk-cloudwatch.jar')
-    implementation files('src/libs/aws-android-sdk-cognito.jar')
-    implementation files('src/libs/aws-android-sdk-cognitoidentityprovider.jar')
-    implementation files('src/libs/aws-android-sdk-comprehend.jar')
-    implementation files('src/libs/aws-android-sdk-core.jar')
-    implementation files('src/libs/aws-android-sdk-ddb-document.jar')
-    implementation files('src/libs/aws-android-sdk-ddb-mapper.jar')
-    implementation files('src/libs/aws-android-sdk-ddb.jar')
-    implementation files('src/libs/aws-android-sdk-ec2.jar')
-    implementation files('src/libs/aws-android-sdk-elb.jar')
-    implementation files('src/libs/aws-android-sdk-iot.jar')
-    implementation files('src/libs/aws-android-sdk-kinesis.jar')
-    implementation files('src/libs/aws-android-sdk-kms.jar')
-    implementation files('src/libs/aws-android-sdk-lambda.jar')
-    implementation files('src/libs/aws-android-sdk-logs.jar')
-    implementation files('src/libs/aws-android-sdk-machinelearning.jar')
-    implementation files('src/libs/aws-android-sdk-mobileanalytics.jar')
-    implementation files('src/libs/aws-android-sdk-pinpoint.jar')
-    implementation files('src/libs/aws-android-sdk-polly.jar')
-    implementation files('src/libs/aws-android-sdk-rekognition.jar')
-    implementation files('src/libs/aws-android-sdk-s3.jar')
-    implementation files('src/libs/aws-android-sdk-sdb.jar')
-    implementation files('src/libs/aws-android-sdk-ses.jar')
-    implementation files('src/libs/aws-android-sdk-sns.jar')
-    implementation files('src/libs/aws-android-sdk-sqs.jar')
-    implementation files('src/libs/aws-android-sdk-transcribe.jar')
-    implementation files('src/libs/aws-android-sdk-translate.jar')
-    implementation project(':aws-android-sdk-mobile-client')
-    implementation project(':aws-android-sdk-cognitoauth')
-    implementation project(':aws-android-sdk-auth-core')
-    implementation 'com.google.code.gson:gson:2.8.2'
-    implementation files('src/libs/org.eclipse.paho.client.mqttv3-1.1.0.jar')
-    implementation files('org.eclipse.paho.client.mqttv3-1.2.1.jar')*/
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation 'com.android.support:appcompat-v7:28.0.0'
     implementation 'com.android.support.constraint:constraint-layout:1.1.3'
@@ -91,19 +52,22 @@ dependencies {
     implementation files('src/libs/aws-android-sdk-pinpoint.jar')
     implementation files('src/libs/aws-android-sdk-polly.jar')
     implementation files('src/libs/aws-android-sdk-rekognition.jar')
-    implementation files('src/libs/aws-android-sdk-s3.jar')
     implementation files('src/libs/aws-android-sdk-sdb.jar')
     implementation files('src/libs/aws-android-sdk-ses.jar')
     implementation files('src/libs/aws-android-sdk-sns.jar')
     implementation files('src/libs/aws-android-sdk-sqs.jar')
     implementation files('src/libs/aws-android-sdk-transcribe.jar')
     implementation files('src/libs/aws-android-sdk-translate.jar')
-    implementation project(':aws-android-sdk-mobile-client')
-    implementation project(':aws-android-sdk-cognitoauth')
-    implementation project(':aws-android-sdk-auth-core')
+    //implementation project(':aws-android-sdk-mobile-client.aar')  //Commented these out, were causing conflicts with auth-core and auth-ui
+    //implementation project(':aws-android-sdk-cognitoauth.aar')    //Replaced with the implementation below
+    //implementation project(':aws-android-sdk-auth-core.aar')
+    implementation files('src/libs/aws-android-sdk-mobile-client.aar')
+    implementation files('src/libs/aws-android-sdk-cognitoauth.aar')
+    implementation files('src/libs/aws-android-sdk-auth-core.aar')
+    implementation files('src/libs/aws-android-sdk-auth-ui.aar')
+    implementation files('src/libs/aws-android-sdk-auth-userpools.aar')
     implementation 'com.google.code.gson:gson:2.8.2'
     implementation files('src/libs/org.eclipse.paho.client.mqttv3-1.1.0.jar')
-
-
-
+    implementation files('src/libs/aws-android-sdk-s3.jar')
+    implementation 'com.android.support:support-v4:28.+'
 }

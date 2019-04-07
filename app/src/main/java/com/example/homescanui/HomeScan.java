@@ -15,14 +15,12 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.amazonaws.mobileconnectors.iot.AWSIotMqttClientStatusCallback;
 import com.amazonaws.mobileconnectors.iot.AWSIotMqttManager;
 import com.amazonaws.mobileconnectors.iot.AWSIotMqttQos;
 import com.amazonaws.mobile.client.AWSMobileClient;
 import com.amazonaws.mobile.client.Callback;
 import com.amazonaws.mobile.client.UserStateDetails;
-
 import java.util.UUID;
 import java.util.concurrent.CountDownLatch;
 
@@ -30,20 +28,14 @@ import java.util.concurrent.CountDownLatch;
 public class HomeScan extends AppCompatActivity {
 
     static final String LOG_TAG = HomeScan.class.getCanonicalName();
-    private static final String AWS_REGION = "US_WEST_2";
-    private static final String AWS_POLICY_NAME = "arn:aws:iot:us-west-2:305050662775:policy/CapstoneNewPolicy";
-    private static final String COGNITO_POOL_ID = "us-west-2:07589be7-8ed8-46b9-89e8-ee97c41cd0c0";
     private static final String IOT_ENDPOINT = "a2vd7uyfqfuks5-ats.iot.us-west-2.amazonaws.com";
-    private Button button;
     private Button gps_button;
-    private static final int REQUEST_CODE_PERMISSION = 2;
-    String mPermission = Manifest.permission.ACCESS_FINE_LOCATION;
-    private TextView textView;
+    private static final int REQUEST_CODE_PERMISSION = 0;
+    String fPermission = Manifest.permission.WRITE_EXTERNAL_STORAGE;
     private LocationManager locationManager;
     private String SHADOW_UPDATE_TOPIC = "$aws/things/CapstonePi/shadow/update";
     String clientId;
     AWSIotMqttManager mqttManager;
-    GPSTracker gps;
     private String lockStatusSend;
 
     @Override
@@ -51,12 +43,13 @@ public class HomeScan extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home_scan);
 
-
         //Declare Buttons and Views in UI
         final TextView gpsView = (TextView) findViewById(R.id.gpsView);
         Button unlockBtn = (Button) findViewById(R.id.unlockBtn);
         Button lockBtn = (Button) findViewById(R.id.lockBtn);
+        Button photoActivityBtn = findViewById(R.id.photoActivityBtn);
 
+        //Set up LocationListener
         LocationListener gpsListener = new LocationListener() {
             @Override
             public void onLocationChanged(Location location) {
@@ -68,22 +61,14 @@ public class HomeScan extends AppCompatActivity {
             }
 
             @Override
-            public void onStatusChanged(String provider, int status, Bundle extras) {
-
-            }
+            public void onStatusChanged(String provider, int status, Bundle extras) { }
 
             @Override
-            public void onProviderEnabled(String provider) {
-
-            }
+            public void onProviderEnabled(String provider) { }
 
             @Override
-            public void onProviderDisabled(String provider) {
-
-            }
+            public void onProviderDisabled(String provider) { }
         };
-
-
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
@@ -99,7 +84,7 @@ public class HomeScan extends AppCompatActivity {
 
         clientId = UUID.randomUUID().toString();
 
-
+        //Initialize latch
         final CountDownLatch latch = new CountDownLatch(1);
         AWSMobileClient.getInstance().initialize(
                 getApplicationContext(),
@@ -116,7 +101,6 @@ public class HomeScan extends AppCompatActivity {
                     }
                 }
         );
-
         try {
             latch.await();
         } catch (InterruptedException e) {
@@ -125,8 +109,12 @@ public class HomeScan extends AppCompatActivity {
 
         mqttManager = new AWSIotMqttManager(clientId,IOT_ENDPOINT);
 
+        /* Unneeded?
         unlockBtn.setEnabled(true);
         lockBtn.setEnabled(true);
+        */
+
+        //Attempt MQTT connection
         try {
             mqttManager.connect(AWSMobileClient.getInstance(), new AWSIotMqttClientStatusCallback() {
                 @Override
@@ -150,45 +138,26 @@ public class HomeScan extends AppCompatActivity {
             Toast.makeText(getApplicationContext(),"AWS Connection Error",Toast.LENGTH_LONG ).show();
         }
 
-
+        //Setup the buttons
         lockBtn.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view){
-
                 lockStatusSend = "{\"state\":{\"desired\": {\"Door Status\": \"Lock\"}}}";
-
                 try {
                     mqttManager.publishString(lockStatusSend, SHADOW_UPDATE_TOPIC, AWSIotMqttQos.QOS0);
                 } catch (Exception e) {
                     Log.e(LOG_TAG, "Publish error.", e);
                 }
-
-
-
-
         }});
 
         unlockBtn.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view){
-
                 lockStatusSend = "{\"state\":{\"desired\": {\"Door Status\": \"Unlock\"}}}";
-
                 try {
                     mqttManager.publishString(lockStatusSend, SHADOW_UPDATE_TOPIC, AWSIotMqttQos.QOS0);
                 } catch (Exception e) {
                     Log.e(LOG_TAG, "Publish error.", e);
                 }
             }});
-        try {
-            if (ActivityCompat.checkSelfPermission(this, mPermission)
-                    != 0) {
-
-                ActivityCompat.requestPermissions(this, new String[]{mPermission},
-                        REQUEST_CODE_PERMISSION);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
 
         gps_button = findViewById(R.id.button2);
         gps_button.setOnClickListener(new View.OnClickListener() {
@@ -200,8 +169,25 @@ public class HomeScan extends AppCompatActivity {
             }
         });
 
+        photoActivityBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(HomeScan.this, PhotoActivity.class);
+                startActivity(intent);
+            }
+        });
 
 
 
+        //Prompt for Storage permission. If both prompts are on same page, second prompt might not activate
+        try {
+            if (ActivityCompat.checkSelfPermission(this, fPermission)
+                    != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this, new String[]{fPermission},
+                        REQUEST_CODE_PERMISSION);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
