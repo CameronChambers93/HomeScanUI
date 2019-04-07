@@ -28,7 +28,7 @@ import java.util.concurrent.CountDownLatch;
 public class HomeScan extends AppCompatActivity {
 
     static final String LOG_TAG = HomeScan.class.getCanonicalName();
-    private static final String IOT_ENDPOINT = "a2vd7uyfqfuks5-ats.iot.us-west-2.amazonaws.com";
+    private static final String IOT_ENDPOINT = "";
     private Button gps_button;
     private static final int REQUEST_CODE_PERMISSION = 0;
     String fPermission = Manifest.permission.WRITE_EXTERNAL_STORAGE;
