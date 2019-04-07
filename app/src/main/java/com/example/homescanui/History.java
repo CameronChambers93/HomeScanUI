@@ -28,7 +28,7 @@ public class History extends AppCompatActivity {
         //This credentialsProvider allows users to access the DynamoDB
         CognitoCachingCredentialsProvider credentialsProvider = new CognitoCachingCredentialsProvider(
                 getApplicationContext(),
-                "us-west-2:5f5ebaab-898a-4a97-a21b-fa40128de072", // Identity pool ID
+                "", // Identity pool ID
                 Regions.US_WEST_2 // Region
         );
         AWSConfiguration configuration = AWSMobileClient.getInstance().getConfiguration();
