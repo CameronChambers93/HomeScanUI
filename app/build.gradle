@@ -30,6 +30,8 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+
+    /*
     implementation files('src/libs/aws-android-sdk-apigateway-core.jar')
     implementation files('src/libs/aws-android-sdk-autoscaling.jar')
     implementation files('src/libs/aws-android-sdk-cloudwatch.jar')
@@ -66,8 +68,20 @@ dependencies {
     implementation files('src/libs/aws-android-sdk-auth-core.aar')
     implementation files('src/libs/aws-android-sdk-auth-ui.aar')
     implementation files('src/libs/aws-android-sdk-auth-userpools.aar')
+    */
     implementation 'com.google.code.gson:gson:2.8.2'
-    implementation files('src/libs/org.eclipse.paho.client.mqttv3-1.1.0.jar')
-    implementation files('src/libs/aws-android-sdk-s3.jar')
+    //implementation files('src/libs/org.eclipse.paho.client.mqttv3-1.1.0.jar')
+    //implementation files('src/libs/aws-android-sdk-s3.jar')
     implementation 'com.android.support:support-v4:28.+'
+    implementation 'com.amazonaws:aws-android-sdk-mobile-client:2.+'
+    implementation 'com.amazonaws:aws-android-sdk-auth-userpools:2.+'
+    implementation 'com.amazonaws:aws-android-sdk-auth-ui:2.+'
+    implementation 'com.amazonaws:aws-android-sdk-cognitoauth:2.+'
+    implementation 'com.amazonaws:aws-android-sdk-auth-core:2.+'
+    implementation 'com.amazonaws:aws-android-sdk-ddb:2.+'
+    implementation 'com.amazonaws:aws-android-sdk-ddb-mapper:2.+'
+    implementation 'com.amazonaws:aws-android-sdk-core:2.+'
+    implementation 'com.amazonaws:aws-android-sdk-cognito:2.+'
+    implementation 'com.amazonaws:aws-android-sdk-cognitoidentityprovider:2.+'
+    implementation 'com.amazonaws:aws-android-sdk-iot:2.+'
 }
