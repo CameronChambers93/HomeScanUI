@@ -51,6 +51,7 @@ public class HomeScan extends AppCompatActivity {
 
         //Set up LocationListener
         LocationListener gpsListener = new LocationListener() {
+
             @Override
             public void onLocationChanged(Location location) {
                 double latitude = location.getLatitude();
@@ -80,7 +81,7 @@ public class HomeScan extends AppCompatActivity {
             // for ActivityCompat#requestPermissions for more details.
             return;
         }
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 2000, 10, gpsListener);
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 200, 1, gpsListener);
 
         clientId = UUID.randomUUID().toString();
 
@@ -109,10 +110,8 @@ public class HomeScan extends AppCompatActivity {
 
         mqttManager = new AWSIotMqttManager(clientId,IOT_ENDPOINT);
 
-        /* Unneeded?
         unlockBtn.setEnabled(true);
         lockBtn.setEnabled(true);
-        */
 
         //Attempt MQTT connection
         try {
