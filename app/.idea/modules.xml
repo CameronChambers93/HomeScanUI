@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/../HomeScanUI.iml" filepath="$PROJECT_DIR$/../HomeScanUI.iml" />
+      <module fileurl="file://$PROJECT_DIR$/app.iml" filepath="$PROJECT_DIR$/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../aws-android-sdk-auth-core/aws-android-sdk-auth-core.iml" filepath="$PROJECT_DIR$/../aws-android-sdk-auth-core/aws-android-sdk-auth-core.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../aws-android-sdk-cognitoauth/aws-android-sdk-cognitoauth.iml" filepath="$PROJECT_DIR$/../aws-android-sdk-cognitoauth/aws-android-sdk-cognitoauth.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../aws-android-sdk-mobile-client/aws-android-sdk-mobile-client.iml" filepath="$PROJECT_DIR$/../aws-android-sdk-mobile-client/aws-android-sdk-mobile-client.iml" />
+    </modules>
+  </component>
+</project>

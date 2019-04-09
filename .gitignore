@@ -24,6 +24,7 @@
 *.iws
 out/
 .idea_modules/
+/app/src/main/res/raw/awsconfiguration.json
 
 cmake-build-*/
 /.idea/assetWizardSettings.xml

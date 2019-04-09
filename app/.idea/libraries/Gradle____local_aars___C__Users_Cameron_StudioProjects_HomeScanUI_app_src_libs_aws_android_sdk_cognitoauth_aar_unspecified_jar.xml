@@ -1,0 +1,10 @@
+<component name="libraryTable">
+  <library name="Gradle: __local_aars__:C.\Users\Cameron\StudioProjects\HomeScanUI\app\src\libs\aws-android-sdk-cognitoauth.aar:unspecified@jar">
+    <CLASSES>
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-1/files-1.1/aws-android-sdk-cognitoauth.aar/487ce6ffff46e89339b6dbe050e26376/res" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-1/files-1.1/aws-android-sdk-cognitoauth.aar/487ce6ffff46e89339b6dbe050e26376/jars/classes.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

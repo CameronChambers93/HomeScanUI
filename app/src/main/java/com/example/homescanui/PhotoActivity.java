@@ -41,8 +41,8 @@ public class PhotoActivity extends AppCompatActivity {
     private AmazonS3Client s3Client;
 
     //DO NOT ALLOW THESE ON GITHUB
-    private final String KEY = "AKIAUOBTPW532D473YMM";
-    private final String SECRET = "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";
+    private final String KEY = "";
+    private final String SECRET = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

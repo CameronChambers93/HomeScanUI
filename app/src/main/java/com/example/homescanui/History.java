@@ -24,8 +24,8 @@ import java.util.Map;
 public class History extends AppCompatActivity {
 
     //DO NOT ALLOW THESE TWO ON GITHUB
-    private final String KEY = "AKIAUOBTPW532D473YMM";
-    private final String SECRET = "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";
+    private final String KEY = "";
+    private final String SECRET = "";
 
     DynamoDBMapper dynamoDBMapper;
     private BasicAWSCredentials credentials;

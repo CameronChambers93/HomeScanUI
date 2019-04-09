@@ -37,9 +37,9 @@ import java.util.concurrent.CountDownLatch;
 public class HomeScan extends AppCompatActivity {
 
     static final String LOG_TAG = HomeScan.class.getCanonicalName();
-    private static final String IOT_ENDPOINT = "a2vd7uyfqfuks5-ats.iot.us-west-2.amazonaws.com";
-    private static final String AWS_POLICY_NAME = "arn:aws:iot:us-west-2:305050662775:policy/CapstoneNewPolicy";
-    private static final String COGNITO_POOL_ID = "us-west-2:07589be7-8ed8-46b9-89e8-ee97c41cd0c0";
+    private static final String IOT_ENDPOINT = "";
+    private static final String AWS_POLICY_NAME = "";
+    private static final String COGNITO_POOL_ID = "";
     private Button gps_button;
     private static final int REQUEST_CODE_PERMISSION = 0;
     String fPermission = Manifest.permission.WRITE_EXTERNAL_STORAGE;

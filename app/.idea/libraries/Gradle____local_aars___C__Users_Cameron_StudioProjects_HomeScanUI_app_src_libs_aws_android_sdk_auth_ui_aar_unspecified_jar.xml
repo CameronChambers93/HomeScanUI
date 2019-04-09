@@ -1,0 +1,10 @@
+<component name="libraryTable">
+  <library name="Gradle: __local_aars__:C.\Users\Cameron\StudioProjects\HomeScanUI\app\src\libs\aws-android-sdk-auth-ui.aar:unspecified@jar">
+    <CLASSES>
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-1/files-1.1/aws-android-sdk-auth-ui.aar/315c8fb14e6dd75370b909bba1f4a5be/res" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-1/files-1.1/aws-android-sdk-auth-ui.aar/315c8fb14e6dd75370b909bba1f4a5be/jars/classes.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
