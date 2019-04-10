@@ -18,6 +18,12 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.amazonaws.mobile.config.AWSConfiguration;
+import com.amazonaws.mobileconnectors.cognitoidentityprovider.CognitoUser;
+import com.amazonaws.mobileconnectors.cognitoidentityprovider.CognitoUserDetails;
+import com.amazonaws.mobileconnectors.cognitoidentityprovider.CognitoUserPool;
+import com.amazonaws.mobileconnectors.cognitoidentityprovider.handlers.GetDetailsHandler;
 import com.amazonaws.mobileconnectors.iot.AWSIotMqttClientStatusCallback;
 import com.amazonaws.mobileconnectors.iot.AWSIotMqttManager;
 import com.amazonaws.mobileconnectors.iot.AWSIotMqttNewMessageCallback;
@@ -30,6 +36,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
+import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.CountDownLatch;
 
@@ -56,6 +63,7 @@ public class HomeScan extends AppCompatActivity {
     private String SHADOW_SUBSCRIBE_TOPIC = "$aws/things/CapstonePi/shadow/update/accepted";
     GPSTracker gps;
     TextView  lockStatusAWS;
+    private CognitoUser user;
 
 
     @Override
@@ -76,6 +84,28 @@ public class HomeScan extends AppCompatActivity {
         criteria.setAccuracy(Criteria.ACCURACY_FINE);
         criteria.setHorizontalAccuracy(Criteria.ACCURACY_HIGH);
         criteria.setVerticalAccuracy(Criteria.ACCURACY_HIGH);
+
+
+        //UserPool contains the data returned from the Login
+        CognitoUserPool userPool = new CognitoUserPool(HomeScan.this, new AWSConfiguration(HomeScan.this));
+        user = userPool.getCurrentUser();
+        // Implement callback handler for get details call
+        GetDetailsHandler getDetailsHandler = new GetDetailsHandler() {
+            @Override
+            public void onSuccess(CognitoUserDetails cognitoUserDetails) {
+                Map<String,String> map = cognitoUserDetails.getAttributes().getAttributes();
+                Log.e("FLKDJ:LKSDF","Phone_number:" + cognitoUserDetails.getAttributes().getAttributes().get("phone_number"));
+                //user.signOut();
+                // The user detail are in cognitoUserDetails
+            }
+            @Override
+            public void onFailure(Exception exception) {
+                Log.e("No","No");
+                // Fetch user details failed, check exception for the cause
+            }
+        };
+        // Fetch the user details
+        user.getDetailsInBackground(getDetailsHandler);
 
 
 

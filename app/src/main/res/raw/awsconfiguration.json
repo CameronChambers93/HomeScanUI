@@ -11,6 +11,14 @@
       }
     }
   },
+  "CognitoUserPool": {
+    "Default": {
+      "PoolId": "us-west-2_6LQxhQRZO",
+      "AppClientId": "679n6me4ldrvmj4137bquh28o8",
+      "AppClientSecret": "mhvvmkcsovpje0v0oll2ebtvt35hsld4pngqh7kklhpeb3qnim9",
+      "Region": "us-west-2"
+    }
+  },
   "S3TransferUtility": {
     "Default": {
       "Bucket": "homescanbucket",
