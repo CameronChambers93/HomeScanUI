@@ -57,5 +57,6 @@ public class MainActivity extends AppCompatActivity {
                         HomeScan.class).execute();
             }
         }).execute();
+
     }
 }

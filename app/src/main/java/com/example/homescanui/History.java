@@ -17,6 +17,8 @@ import com.amazonaws.regions.Region;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
+
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -52,8 +54,10 @@ public class History extends AppCompatActivity {
                 new BroadcastReceiver() {
                     @Override
                     public void onReceive(Context context, Intent intent) {
-                        String text = intent.getStringExtra("History");
-                        historyResultText.append(text);
+                        ArrayList<String> text = intent.getStringArrayListExtra("History");
+                        for (String s: text) {
+                            historyResultText.append(s);
+                        }
                     }
                 }, new IntentFilter(History.ACTION_HISTORY_BROADCAST)
         );
@@ -72,17 +76,28 @@ public class History extends AppCompatActivity {
 
                     //Creates the query
                     Map<String, AttributeValue> eav = new HashMap<>();
+
+                    /*
                     eav.put(":val1", new AttributeValue().withN("4446"));
                     DynamoDBScanExpression scanExpression = new DynamoDBScanExpression()
                             .withFilterExpression("PhoneNumDoorStatus = :val1").withExpressionAttributeValues(eav);
+                            */
 
                     //Performs a scan and sends a broadcast to the receiver to update historyResultText
-                    List<LockHistoryDO> scanResult = dynamoDBMapper.scan(LockHistoryDO.class, scanExpression);
+                    ArrayList<String> scanResultToArrayList = new ArrayList<>();
+                    List<LockHistoryDO> scanResult = dynamoDBMapper.scan(LockHistoryDO.class, new DynamoDBScanExpression());
+                    for (LockHistoryDO lock: scanResult) {
+                        scanResultToArrayList.add(lock.getTime() + "  -  " + lock.getLockStatus() + "\n");
+                    }
+                    /*
                     for (LockHistoryDO lockHistoryItem: scanResult) {
                         Intent intent = new Intent(ACTION_HISTORY_BROADCAST);
-                        intent.putExtra("History", lockHistoryItem.getUserId()+"\t"+lockHistoryItem.getTime()+"\t"+lockHistoryItem.getLockStatus()+"\n");
+                        intent.putExtra("History", lockHistoryItem.getTime()+"\t"+lockHistoryItem.getLockStatus()+"\n");
                         LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(intent);
-                    }
+                    }*/
+                    Intent intent = new Intent(ACTION_HISTORY_BROADCAST);
+                    intent.putStringArrayListExtra("History", scanResultToArrayList);
+                    LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(intent);
                 }
                 catch(Exception e){
                     Log.e("FAILURE: ", e.toString());

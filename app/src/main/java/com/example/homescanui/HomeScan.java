@@ -19,6 +19,10 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.amazonaws.auth.AWSCredentials;
+import com.amazonaws.auth.AWSCredentialsProvider;
+import com.amazonaws.auth.CognitoCachingCredentialsProvider;
+import com.amazonaws.mobile.client.SignOutOptions;
 import com.amazonaws.mobile.config.AWSConfiguration;
 import com.amazonaws.mobileconnectors.cognitoidentityprovider.CognitoUser;
 import com.amazonaws.mobileconnectors.cognitoidentityprovider.CognitoUserDetails;
@@ -31,6 +35,7 @@ import com.amazonaws.mobileconnectors.iot.AWSIotMqttQos;
 import com.amazonaws.mobile.client.AWSMobileClient;
 import com.amazonaws.mobile.client.Callback;
 import com.amazonaws.mobile.client.UserStateDetails;
+import com.amazonaws.regions.Regions;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -45,8 +50,6 @@ public class HomeScan extends AppCompatActivity {
 
     static final String LOG_TAG = HomeScan.class.getCanonicalName();
     private static final String IOT_ENDPOINT = "";
-    private static final String AWS_POLICY_NAME = "";
-    private static final String COGNITO_POOL_ID = "";
     private Button gps_button;
     private static final int REQUEST_CODE_PERMISSION = 0;
     String fPermission = Manifest.permission.WRITE_EXTERNAL_STORAGE;
@@ -86,9 +89,9 @@ public class HomeScan extends AppCompatActivity {
         criteria.setVerticalAccuracy(Criteria.ACCURACY_HIGH);
 
 
-        //UserPool contains the data returned from the Login
         CognitoUserPool userPool = new CognitoUserPool(HomeScan.this, new AWSConfiguration(HomeScan.this));
         user = userPool.getCurrentUser();
+
         // Implement callback handler for get details call
         GetDetailsHandler getDetailsHandler = new GetDetailsHandler() {
             @Override
@@ -98,16 +101,16 @@ public class HomeScan extends AppCompatActivity {
                 //user.signOut();
                 // The user detail are in cognitoUserDetails
             }
+
             @Override
             public void onFailure(Exception exception) {
                 Log.e("No","No");
                 // Fetch user details failed, check exception for the cause
             }
         };
+
         // Fetch the user details
         user.getDetailsInBackground(getDetailsHandler);
-
-
 
 
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
@@ -183,11 +186,15 @@ public class HomeScan extends AppCompatActivity {
 
         mqttManager = new AWSIotMqttManager(clientId,IOT_ENDPOINT);
 
-
+        CognitoCachingCredentialsProvider credentialsProvider = new CognitoCachingCredentialsProvider(
+                getApplicationContext(),
+                "us-west-2:07589be7-8ed8-46b9-89e8-ee97c41cd0c0", // Identity pool ID
+                Regions.US_WEST_2 // Region
+        );
 
         //Attempt MQTT connection
         try {
-            mqttManager.connect(AWSMobileClient.getInstance(), new AWSIotMqttClientStatusCallback() {
+            mqttManager.connect(credentialsProvider, new AWSIotMqttClientStatusCallback() {
                 @Override
                 public void onStatusChanged(final AWSIotMqttClientStatus status,
                                             final Throwable throwable) {
@@ -249,8 +256,6 @@ public class HomeScan extends AppCompatActivity {
             }
         });
 
-
-
         //Prompt for Storage permission. If both prompts are on same page, second prompt might not activate
         try {
             if (ActivityCompat.checkSelfPermission(this, fPermission)
@@ -283,9 +288,9 @@ public class HomeScan extends AppCompatActivity {
                                         JSONObject reportedjson = statejson.getJSONObject("reported");
                                         status = reportedjson.getString("Door Status");
                                         switch(status){
-                                            case "lock":
+                                            case "Lock":
                                                 lockStatusAWS.setText("Locked");
-                                            case "unlock":
+                                            case "Unlock":
                                                 lockStatusAWS.setText("Unlocked");
                                         }
 
@@ -304,12 +309,6 @@ public class HomeScan extends AppCompatActivity {
 
 
     }
-
-
-
-
-
-
 
     LocationListener gpsListener = new LocationListener() {
         @Override

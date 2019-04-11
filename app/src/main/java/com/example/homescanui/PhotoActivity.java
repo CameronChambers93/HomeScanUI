@@ -93,7 +93,7 @@ public class PhotoActivity extends AppCompatActivity {
                             .awsConfiguration(AWSMobileClient.getInstance().getConfiguration())
                             .s3Client(s3Client)
                             .build();
-            TransferObserver uploadObserver = transferUtility.upload( "cam" + "." + getFileExtension(fileUri), file);
+            TransferObserver uploadObserver = transferUtility.upload( "user" + "." + getFileExtension(fileUri), file);
             uploadObserver.setTransferListener(new TransferListener() {
 
                 @Override
@@ -111,7 +111,7 @@ public class PhotoActivity extends AppCompatActivity {
                 public void onProgressChanged(int id, long bytesCurrent, long bytesTotal) {
                     float percentDonef = ((float) bytesCurrent / (float) bytesTotal) * 100;
                     int percentDone = (int) percentDonef;
-                    file_status.setText("ID:" + id + "|bytesCurrent: " + bytesCurrent + "|bytesTotal: " + bytesTotal + "|" + percentDone + "%");
+                    file_status.setText(percentDone + "%");
                 }
 
                 @Override
