@@ -1,5 +1,5 @@
 <resources>
     <string name="app_name">HomeScan UI</string>
     <string name="get_location">getlocation</string>
-    <string name="HistoryDisplayText">History will be displayed here\nTime-------------------------Status:\n</string>
+    <string name="HistoryDisplayText">History will be displayed here</string>
 </resources>

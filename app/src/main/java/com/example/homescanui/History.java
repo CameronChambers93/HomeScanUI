@@ -19,9 +19,13 @@ import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.locks.Lock;
 
 public class History extends AppCompatActivity {
 
@@ -32,13 +36,19 @@ public class History extends AppCompatActivity {
     DynamoDBMapper dynamoDBMapper;
     private BasicAWSCredentials credentials;
     public TextView historyResultText;
-    public static final String
-            ACTION_HISTORY_BROADCAST = History.class.getName() + "HistoryBroadcast";
+    public TextView timeText;
+    public  TextView lockText;
+    public static final String ACTION_HISTORY_BROADCAST = History.class.getName() + "HistoryBroadcast";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_history);
+
+        //Where the text will be placed
+        historyResultText = findViewById(R.id.historyResultText);
+        timeText = findViewById(R.id.timeText);
+        lockText = findViewById(R.id.lockText);
 
         //Instantiate a DynamoDB Client using the access KEY and SECRET
         AWSMobileClient.getInstance().initialize(this).execute();
@@ -54,10 +64,11 @@ public class History extends AppCompatActivity {
                 new BroadcastReceiver() {
                     @Override
                     public void onReceive(Context context, Intent intent) {
-                        ArrayList<String> text = intent.getStringArrayListExtra("History");
-                        for (String s: text) {
-                            historyResultText.append(s);
-                        }
+                        String time = intent.getStringExtra("Time");
+                        String status = intent.getStringExtra("Status");
+                        timeText.append("\n" + time);
+                        lockText.append("\n" + status);
+
                     }
                 }, new IntentFilter(History.ACTION_HISTORY_BROADCAST)
         );
@@ -71,38 +82,47 @@ public class History extends AppCompatActivity {
             @Override
             public void run() {
                 try {
-                    //Where the text will be placed
-                    historyResultText = findViewById(R.id.historyResultText);
-
-                    //Creates the query
-                    Map<String, AttributeValue> eav = new HashMap<>();
-
-                    /*
-                    eav.put(":val1", new AttributeValue().withN("4446"));
-                    DynamoDBScanExpression scanExpression = new DynamoDBScanExpression()
-                            .withFilterExpression("PhoneNumDoorStatus = :val1").withExpressionAttributeValues(eav);
-                            */
 
                     //Performs a scan and sends a broadcast to the receiver to update historyResultText
-                    ArrayList<String> scanResultToArrayList = new ArrayList<>();
                     List<LockHistoryDO> scanResult = dynamoDBMapper.scan(LockHistoryDO.class, new DynamoDBScanExpression());
-                    for (LockHistoryDO lock: scanResult) {
-                        scanResultToArrayList.add(lock.getTime() + "  -  " + lock.getLockStatus() + "\n");
-                    }
-                    /*
-                    for (LockHistoryDO lockHistoryItem: scanResult) {
-                        Intent intent = new Intent(ACTION_HISTORY_BROADCAST);
-                        intent.putExtra("History", lockHistoryItem.getTime()+"\t"+lockHistoryItem.getLockStatus()+"\n");
-                        LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(intent);
-                    }*/
-                    Intent intent = new Intent(ACTION_HISTORY_BROADCAST);
-                    intent.putStringArrayListExtra("History", scanResultToArrayList);
-                    LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(intent);
+
+                    processResults(scanResult);
                 }
                 catch(Exception e){
-                    Log.e("FAILURE: ", e.toString());
+                    Log.e("FAILURE: ", "here", e);
                 }
             }
         }).start();
+    }
+
+    /* This sends out the results of the Dynamo scan to the history view. The DynamoDB scan iterator does not iterate correctly, so
+        we can't sort based on time for now.
+     */
+    public void processResults(List<LockHistoryDO> scanResult) {
+        /*
+        ArrayList<LockHistoryDO> cleanResult = new ArrayList<LockHistoryDO>();
+
+        for (LockHistoryDO lock: scanResult) {
+            cleanResult.add(lock);
+        }
+
+        Collections.sort(cleanResult);
+
+        Intent intent = new Intent(ACTION_HISTORY_BROADCAST);
+
+        for (LockHistoryDO lock: cleanResult) {
+            intent.putExtra("Time", lock.getTime());
+            intent.putExtra("Status", lock.getLockStatus());
+            LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(intent);
+        }
+        */
+
+        for (LockHistoryDO lock: scanResult) {
+            Intent intent = new Intent(ACTION_HISTORY_BROADCAST);
+            intent.putExtra("Time", lock.getTime());
+            intent.putExtra("Status", lock.getLockStatus());
+            LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(intent);
+        }
+
     }
 }

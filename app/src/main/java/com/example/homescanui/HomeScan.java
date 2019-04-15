@@ -97,7 +97,7 @@ public class HomeScan extends AppCompatActivity {
             @Override
             public void onSuccess(CognitoUserDetails cognitoUserDetails) {
                 Map<String,String> map = cognitoUserDetails.getAttributes().getAttributes();
-                Log.e("FLKDJ:LKSDF","Phone_number:" + cognitoUserDetails.getAttributes().getAttributes().get("phone_number"));
+                Log.e("PHONE NUMBER","Phone number:" + cognitoUserDetails.getAttributes().getAttributes().get("phone_number"));
                 //user.signOut();
                 // The user detail are in cognitoUserDetails
             }
